@@ -29,8 +29,8 @@ var Player = function () {
 
     // Player Sprite
     this.sprite = 'images/char-horn-girl.png';
-    // this.x = ;
-    // this.y = ;
+    this.x = 2;
+    this.y = 4;
 };
 
 Player.prototype.update = function (dt) {
@@ -38,7 +38,7 @@ Player.prototype.update = function (dt) {
 };
 
 Player.prototype.render = function() {
-    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+    ctx.drawImage(Resources.get(this.sprite), 1 * 101, 0);
 };
 
 Player.prototype.handleInput = function(keyPress) {
