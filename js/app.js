@@ -24,7 +24,7 @@ Enemy.prototype.update = function(dt) {
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-  ctx.drawImage(Resources.get(this.sprite), this.x * XFACTOR, this.y * YFACTOR + YADJUST);
+  //ctx.drawImage(Resources.get(this.sprite), this.x * XFACTOR, this.y * YFACTOR + YADJUST);
 };
 
 // Now write your own player class
@@ -37,16 +37,47 @@ var Player = function () {
   this.sprite = 'images/char-horn-girl.png';
 
   // New Player location initalized to bottom central tile
-  this.x = 3;
-  this.y = 5;
+  this.xTile = 2;
+  this.yTile = 5;
+
+  // Initialize canvas location variables with canvas
+  // coordinate location corresponding to tile numbers.
+  this.xCanvas = this.xTile * XFACTOR;
+  this.yCanvas = this.yTile * YFACTOR + YADJUST;
 };
 
 Player.prototype.update = function (dt) {
-  // body...
+
+	var xCanvasDiff = this.xTile * XFACTOR - this.xCanvas;
+
+	if (Math.abs(xCanvasDiff) >= dt * 32){
+		this.xCanvas = this.xCanvas + (dt * 16) * xCanvasDiff;
+	} else {
+		this.xCanvas = this.xTile * XFACTOR;
+	}
+
+	var yCanvasDiff = this.yTile * YFACTOR + YADJUST - this.yCanvas;
+
+	if (Math.abs(yCanvasDiff) >= dt * 32){
+		this.yCanvas = this.yCanvas + (dt * 16) * yCanvasDiff;
+	} else {
+		this.yCanvas = this.yTile * YFACTOR + YADJUST;
+	}
+
+	$('#xPlayerCanvas').text(this.xCanvas.toString());
+	$('#yPlayerCanvas').text(this.yCanvas.toString());
+	$('#dt').text( dt.toString() );
 };
 
+//
+// Player.prototype.win = function () {
+// 	this.x = 2;
+//   this.y = 5;
+// }
+//
+
 Player.prototype.render = function() {
-  ctx.drawImage(Resources.get(this.sprite), this.x * XFACTOR, this.y * YFACTOR + YADJUST);
+  ctx.drawImage(Resources.get(this.sprite), this.xCanvas, this.yCanvas);
 };
 
 // TODO
@@ -56,19 +87,18 @@ Player.prototype.render = function() {
 Player.prototype.handleInput = function(keyPress) {
   switch (keyPress) {
     case 'left':
-    	this.x === 0 ? 0 : this.x--;
+    	if (this.xTile !== 0) this.xTile--;
     	break;
     case 'right':
-    	this.x === 4 ? 4 : this.x++;
+    	if (this.xTile !== 4) this.xTile++;
     	break;
     case 'up':
-    	this.y === 0 ? 0 : this.y--;
+    	if (this.yTile !== 0) this.yTile--;
     	break;
     case 'down':
-    	this.y === 5 ? 5 : this.y++;
+    	if (this.yTile !== 5) this.yTile++;
     	break;
   };
-  this.render();
 };
 
 // Now instantiate your objects.

@@ -1,8 +1,22 @@
 body {
     text-align: center;
     background-color: lightgray;
+    box-sizing: border-box;
 }
 
 canvas {
-	border: 1px solid pink;
+	border: 3px solid purple;
+}
+
+
+/*TEMPORARY DISPLAY CSS*/
+.display {
+	border: 3px solid blue;
+}
+
+.display li {
+	text-align: left;
+	/*display: inline-block;*/
+	margin: 2px;
+	border: 3px solid green;
 }
