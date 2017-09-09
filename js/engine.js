@@ -134,10 +134,14 @@ var Engine = (function(global) {
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
-
+        eraseAboveTopRow();
         renderEntities();
     }
 
+    /* This function clears empty canvas space above the water tiles */
+    function eraseAboveTopRow() {
+        ctx.clearRect(0,0,505,50);
+    }
     /* This function is called by the render function and is called on each game
      * tick. Its purpose is to then call the render functions you have defined
      * on your enemy and player entities within app.js

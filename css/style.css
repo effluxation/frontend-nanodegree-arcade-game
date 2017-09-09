@@ -8,15 +8,22 @@ canvas {
 	border: 3px solid purple;
 }
 
+canvas, .display {
+	display: inline-block;
+}
 
 /*TEMPORARY DISPLAY CSS*/
 .display {
+	width: 175px;
 	border: 3px solid blue;
 }
 
+.display ul {
+	list-style: none;
+	padding-left: 2px;
+}
 .display li {
 	text-align: left;
-	/*display: inline-block;*/
 	margin: 2px;
 	border: 3px solid green;
 }

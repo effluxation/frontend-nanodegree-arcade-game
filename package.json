@@ -19,7 +19,9 @@
   "homepage": "https://github.com/effluxation/frontend-nanodegree-arcade-game#readme",
   "devDependencies": {
     "grunt": "^1.0.1",
+    "grunt-contrib-jshint": "^1.1.0",
     "grunt-contrib-watch": "^1.0.0",
+    "jshint-stylish": "^2.2.1",
     "load-grunt-tasks": "^3.5.2"
   }
 }
