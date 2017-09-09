@@ -1,29 +1,61 @@
-// Factors used to convert from tile coordinates to pixel coordinates
+// Global variables = Factors used to convert from tile coordinates to pixel coordinates
 var XFACTOR = 101;
 var YFACTOR = 83;
-// Used to center vertically in tile
+	// Used to center sprite vertically inside tile
 var YADJUST = -35;
+
+// Returns a random integer between min and max
+var getRandom = function (min, max) {
+	return Math.floor(Math.random() * (max - min)) + min;
+};
 
 // Enemies our player must avoid
 var Enemy = function(enemyRow) {
-  this.enemyRow = enemyRow;
-
+	// Row on which enemy will appear
+  this.yTile = enemyRow;
+  this.xMax = 506;
+  this.xMin = -101;
   // The image/sprite for our enemies, this uses
   // a helper we've provided to easily load images
   this.sprite = 'images/enemy-bug.png';
+
+  // Set remaining enemy settings
+  this.reset();
 };
 
+Enemy.prototype.reset = function () {
+	// Set speed and wait time before start
+	this.speed = getRandom( 150, getRandom(300, 800));
+	this.startCountdown = getRandom(0.5, 4);
+
+	this.freeze = false;
+
+// Initialize canvas location variables with canvas
+// coordinate location corresponding to tile numbers.
+// Render uses these variables
+  this.yCanvas = this.yTile * YFACTOR + YADJUST;
+  this.xCanvas = this.xMin;
+
+};
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
-  // You should multiply any movement by the dt parameter
-  // which will ensure the game runs at the same speed for
-  // all computers.
+  // Move enemy only if not frozen and not counting down to start
+  if (!this.freeze && !this.startCountdown) {
+  	this.xCanvas = this.xCanvas + this.speed * dt;
+  	if (this.xCanvas >= this.xMax) this.reset();
+
+  // Check if counting down to start, if yes, decrement countdown
+  } else if (this.startCountdown > 0) {
+  	this.startCountdown = this.startCountdown - dt;
+  	if (this.startCountdown < 0) this.startCountdown = 0;
+  }
 };
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
-  //ctx.drawImage(Resources.get(this.sprite), this.x * XFACTOR, this.y * YFACTOR + YADJUST);
+  ctx.drawImage(Resources.get(this.sprite), this.xCanvas , this.yCanvas);
+  ctx.strokeRect(this.xCanvas + 5, this.yCanvas + 85, 90 , 52);
 };
 
 // Now write your own player class
@@ -228,12 +260,11 @@ Player.prototype.reset = function () {
 };
 
 Player.prototype.render = function() {
-	//Display player score
-	ctx.fillText(this.points.toString(), 490, 30);
-
 	// Only render if invisible counter is 0
 	if (!this.invisible)
 		ctx.drawImage(Resources.get(this.sprite), this.xCanvas, this.yCanvas);
+  ctx.lineWidth = 1;
+  ctx.strokeRect(this.xCanvas + XFACTOR/5, this.yCanvas + 100, XFACTOR*3/5,XFACTOR*2.4/5);
 };
 
 
