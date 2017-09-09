@@ -5,9 +5,8 @@ var YFACTOR = 83;
 var YADJUST = -35;
 
 // Enemies our player must avoid
-var Enemy = function() {
-  // Variables applied to each of our instances go here,
-  // we've provided one for you to get started
+var Enemy = function(enemyRow) {
+  this.enemyRow = enemyRow;
 
   // The image/sprite for our enemies, this uses
   // a helper we've provided to easily load images
@@ -44,8 +43,6 @@ var Player = function () {
 Player.prototype.update = function (dt) {
 
 	if (this.invisible) {
-		// Erase sprite at its current location
-		ctx.clearRect(0,0, 505, 50);
 		// If sprite is invisible, reduce the invisibility counter
 		this.invisible = Math.abs(this.invisible) - this.invisible * 8 * dt;
 		// Once counter approach 0, make it 0 and reset player
@@ -84,7 +81,6 @@ Player.prototype.update = function (dt) {
 				// Initiate victory sequence if reached top blue tile
 				if (this.yCanvas === YADJUST){
 						this.victory = true;
-						// this.death = true;
 						this.jumpingUp = true;
 				}
 			}
@@ -114,6 +110,7 @@ Player.prototype.update = function (dt) {
 	}
 };
 
+// Victory jump animation
 Player.prototype.jump = function (dt) {
 	var victoryJumpHeight = -20,
 			dtFactor = 18,
@@ -121,19 +118,18 @@ Player.prototype.jump = function (dt) {
 	// Move up phase during jump
 	if (this.jumpingUp) {
 		// Check if player is beneath top of jump
-		if (this.yCanvas > victoryJumpHeight + YADJUST ) {
-			yCanvasDiff = victoryJumpHeight + YADJUST - this.yCanvas;
-			// Adjust sprite location by a factor of dt
-			this.yCanvas = this.yCanvas + (dtFactor * dt) * yCanvasDiff;
 
-			// Check if conditions for reaching top of jump fulfilled
-			if( (this.yCanvas < victoryJumpHeight + YADJUST) ||
-					(dtFactor * dt) > Math.abs(yCanvasDiff) ) {
-				this.yCanvas = victoryJumpHeight + YADJUST;
-				yCanvasDiff = 0;
-				// Next update() cycle will move on to down phase of jump
-				this.jumpingUp = false;
-			}
+		yCanvasDiff = victoryJumpHeight + YADJUST - this.yCanvas;
+		// Adjust sprite location by a factor of dt
+		this.yCanvas = this.yCanvas + (dtFactor * dt) * yCanvasDiff;
+
+		// Check if conditions for reaching top of jump fulfilled
+		if( (this.yCanvas < victoryJumpHeight + YADJUST) ||
+				(dtFactor * dt) > Math.abs(yCanvasDiff) ) {
+			this.yCanvas = victoryJumpHeight + YADJUST;
+			yCanvasDiff = 0;
+			// Next update() cycle will move on to down phase of jump
+			this.jumpingUp = false;
 		}
 
 	// Moving down phase of jump
@@ -152,7 +148,7 @@ Player.prototype.jump = function (dt) {
 			this.currentJumps++;
 			if( this.currentJumps === this.maxVictoryJumps) {
 				//Finished jumps, add points and make invisible
-				this.points=+100;
+				this.points = this.points + 100;
 				this.invisible = 2;
 
 			}
@@ -161,42 +157,56 @@ Player.prototype.jump = function (dt) {
 	$('#yCanvasDiff').text( yCanvasDiff.toFixed(2) ); //BOF
 };
 
+// Death animation
 Player.prototype.die = function (dt) {
-	var deathJumpHeight = -25,
+	var deathJumpHeight = -30,
 			dtFactor = 18,
 			yCanvasDiff = 0;
-	// Move up during jump
+	// Move up during death sequence
 	if (this.jumpingUp) {
-		if (this.yCanvas > this.yTile * YFACTOR + deathJumpHeight + YADJUST ) {
+
 			yCanvasDiff = this.yTile * YFACTOR + deathJumpHeight + YADJUST - this.yCanvas;
+			// Adjust sprite position based on dt factor
 			this.yCanvas = this.yCanvas + (dtFactor * dt) * yCanvasDiff;
+			// Check if reach top of jump
 			if( (this.yCanvas < this.yTile * YFACTOR + deathJumpHeight + YADJUST) ||
 					(dtFactor * dt) > Math.abs(yCanvasDiff) ) {
 				this.yCanvas = this.yTile * YFACTOR + deathJumpHeight + YADJUST;
 				yCanvasDiff = 0;
+				// Will begin descent sequence
 				this.jumpingUp = false;
 			}
-		}
 
-	// Moving down part of jump
+	// Moving down part of death fall
 	} else {
-
 			yCanvasDiff = 5.5 * YFACTOR + YADJUST - this.yCanvas;
+			// Adjust sprite position during fall.
 			this.yCanvas = this.yCanvas + (dtFactor * dt) * yCanvasDiff;
+			// Check if reached bottom of fall
 			if( (this.yCanvas > 5.5 * YFACTOR + YADJUST) || (dtFactor * dt) > Math.abs(yCanvasDiff) ) {
 				this.yCanvas = 5.5 * YFACTOR + YADJUST;
 				yCanvasDiff = 0;
 				this.jumpingUp = true;
-				if (this.points >= 100)	this.points=-100;
-				this.invisible = 2;
+				// Subtract points and make invisible
+				if (this.points < 100){
+					this.points = 0;
+				}else {
+					this.points = this.points - 100;
+				}
+				this.invisible = 2.3;
 			}
+
 
 	}
 
 	$('#yCanvasDiff').text( yCanvasDiff.toFixed(2) ); //BOF
 };
 
-	// Reset player to starting positiong after death or victory
+Player.prototype.getScore = function () {
+	return this.points;
+};
+
+// Reset player to starting positiong after death or victory
 Player.prototype.reset = function () {
 	this.death = false;
   this.victory = false;
@@ -218,8 +228,12 @@ Player.prototype.reset = function () {
 };
 
 Player.prototype.render = function() {
+	//Display player score
+	ctx.fillText(this.points.toString(), 490, 30);
+
 	// Only render if invisible counter is 0
-	if (!this.invisible) ctx.drawImage(Resources.get(this.sprite), this.xCanvas, this.yCanvas);
+	if (!this.invisible)
+		ctx.drawImage(Resources.get(this.sprite), this.xCanvas, this.yCanvas);
 };
 
 
@@ -247,19 +261,26 @@ Player.prototype.handleInput = function(keyPress) {
 // Place the player object in a variable called player
 
 var allEnemies = [];
-// var enemy1 = new Enemy();
-// allEnemies.push(enemy1);
+var enemy1 = new Enemy(1);
+allEnemies.push(enemy1);
 
-// var enemy2 = new Enemy();
-// allEnemies.push(enemy2);
+var enemy2 = new Enemy(1);
+allEnemies.push(enemy2);
 
-// var enemy3 = new Enemy();
-// allEnemies.push(enemy3);
+var enemy3 = new Enemy(2);
+allEnemies.push(enemy3);
 
-// var enemy4 = new Enemy();
-// allEnemies.push(enemy4);
+var enemy4 = new Enemy(2);
+allEnemies.push(enemy4);
+
+var enemy5 = new Enemy(3);
+allEnemies.push(enemy5);
+
+var enemy6 = new Enemy(3);
+allEnemies.push(enemy6);
 
 var player = new Player();
+
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.

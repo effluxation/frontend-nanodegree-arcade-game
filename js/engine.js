@@ -28,6 +28,10 @@ var Engine = (function(global) {
     canvas.height = 606;
     doc.body.appendChild(canvas);
 
+    // Added font info
+    ctx.font = 'bold 30px sans-serif';
+    ctx.textAlign="end";
+
     /* This function serves as the kickoff point for the game loop itself
      * and handles properly calling the update and render methods.
      */
@@ -135,12 +139,18 @@ var Engine = (function(global) {
             }
         }
         eraseAboveTopRow();
+        displayScore();
         renderEntities();
     }
 
     /* This function clears empty canvas space above the water tiles */
     function eraseAboveTopRow() {
         ctx.clearRect(0,0,505,50);
+    }
+
+    function displayScore() {
+        ctx.fillText('Score: ', 110, 30);
+        ctx.fillText(player.getScore(), 490, 30);
     }
     /* This function is called by the render function and is called on each game
      * tick. Its purpose is to then call the render functions you have defined
