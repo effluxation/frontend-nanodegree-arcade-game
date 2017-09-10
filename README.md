@@ -1,8 +1,20 @@
 Arcade Frogger Game
 ===============================
 
-#Instructions
-frontend-nanodegree-arcade-game
-Students should use this [rubric](https://review.udacity.com/#!/projects/2696458597/rubric) for self-checking their submission. Make sure the functions you write are **object-oriented** - either class functions (like Player and Enemy) or class prototype functions such as Enemy.prototype.checkCollisions, and that the keyword 'this' is used appropriately within your class and class prototype functions to refer to the object the function is called upon. Also be sure that the **readme.md** file is updated with your instructions on both how to 1. Run and 2. Play your arcade game.
+## Instructions for launching the game
 
-For detailed instructions on how to get started, check out this [guide](https://docs.google.com/document/d/1v01aScPjSWCCWQLIpFqvg3-vXLH2e8_SZQKC8jNO0Dc/pub?embedded=true).
+1. Clone this repo or download and unzip so that you have the directory frontend-nanodegree-arcade-game on your computer at the location of your choice.
+
+2. Open index.html in your browser.
+
+## Instructions for playing the game
+
+1. Use the left, right, up, down arrow keys on your keyboard to move the player around the playing field.
+
+2. Your goal is to reach the blue section on top. You will receive a 100 points for every successful crossing. You then be automatically teleported back to the start location.
+
+3. Enemies move horizontally on the gray tiles. Use your arrow keys to avoid them. If you touch them, you will lose a 100 points and end up back at the starting point.
+
+Good luck
+
+
