@@ -101,8 +101,6 @@ var Engine = (function(global) {
     }
 
     function checkCollisions() {
-
-
         // Only check for collision if player is not dead already
         if (!player.isDead()) {
             // Obrain current player surface area
@@ -131,8 +129,6 @@ var Engine = (function(global) {
                 }
             }
         }
-
-
     }
 
     /* This function initially draws the "game level", it will then call
