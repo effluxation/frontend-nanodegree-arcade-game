@@ -4,11 +4,6 @@ var YFACTOR = 83;
 	// Used to center sprite vertically inside tile
 var YADJUST = -35;
 
-// Returns a random integer between min and max
-var getRandom = function (min, max) {
-	return Math.floor(Math.random() * (max - min)) + min;
-};
-
 // Enemies our player must avoid
 var Enemy = function(enemyRow) {
 	// Row on which enemy will appear
@@ -29,8 +24,7 @@ Enemy.prototype.reset = function () {
 	// Set speed and wait time before start
 	this.speed = getRandom( 150, getRandom(300, 800));
 	this.startCountdown = getRandom(0.5, 4);
-
-	this.freeze = false;
+	this.frozen = false;
 
 // Initialize canvas location variables with canvas
 // coordinate location corresponding to tile numbers.
@@ -38,28 +32,33 @@ Enemy.prototype.reset = function () {
   this.yCanvas = this.yTile * YFACTOR + YADJUST;
   this.xCanvas = this.xMin;
 
+  // Returns a random integer between min and max
+  function getRandom (min, max) {
+    return Math.floor(Math.random() * (max - min)) + min;
+  }
 };
+
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
 Enemy.prototype.update = function(dt) {
   // Move enemy only if not frozen and not counting down to start
-  if (!this.freeze && !this.startCountdown) {
+  if (!this.frozen && !this.startCountdown) {
   	this.xCanvas = this.xCanvas + this.speed * dt;
   	if (this.xCanvas >= this.xMax) this.reset();
 
   // Check if counting down to start, if yes, decrement countdown
-  } else if (this.startCountdown > 0 && !this.freeze) {
+  } else if (this.startCountdown > 0 && !this.frozen) {
   	this.startCountdown = this.startCountdown - dt;
   	if (this.startCountdown < 0) this.startCountdown = 0;
   }
 };
 
 Enemy.prototype.freeze = function () {
-	this.freeze = true;
+	this.frozen = true;
 };
 
 Enemy.prototype.unfreeze = function () {
-	this.freeze = false;
+	this.frozen = false;
 };
 
 Enemy.prototype.bounds = function () {
@@ -101,7 +100,6 @@ Player.prototype.bounds = function () {
 };
 
 Player.prototype.update = function (dt) {
-
 	if (this.invisible) {
 		// If sprite is invisible, reduce the invisibility counter
 		this.invisible = Math.abs(this.invisible) - this.invisible * 8 * dt;
@@ -245,8 +243,6 @@ Player.prototype.dying = function (dt) {
 				}
 				this.invisible = 2.3;
 			}
-
-
 	}
 
 	$('#yCanvasDiff').text( yCanvasDiff.toFixed(2) ); //BOF
@@ -256,6 +252,10 @@ Player.prototype.getScore = function () {
 	return this.points;
 };
 
+Player.prototype.isDead = function () {
+	return this.death;
+}
+
 // Reset player to starting positiong after death or victory
 Player.prototype.reset = function () {
 	this.death = false;
@@ -263,7 +263,6 @@ Player.prototype.reset = function () {
   this.jumpingUp = true;
   this.currentJumps = 0;
   this.invisible = 0;
-
 
 // New Player location initalized to bottom central tile
   this.xTile = 2;
@@ -274,6 +273,10 @@ Player.prototype.reset = function () {
 // Render uses these variables
   this.xCanvas = this.xTile * XFACTOR;
   this.yCanvas = this.yTile * YFACTOR + YADJUST;
+
+  for (var i = 0; i < allEnemies.length; i++) {
+  	allEnemies[i].unfreeze();
+  }
 
 };
 
@@ -307,7 +310,6 @@ Player.prototype.handleInput = function(keyPress) {
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
-
 var allEnemies = [];
 var enemy1 = new Enemy(1);
 allEnemies.push(enemy1);
