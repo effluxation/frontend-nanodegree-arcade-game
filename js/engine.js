@@ -124,8 +124,8 @@ var Engine = (function(global) {
 
                     // Collision detected
                     player.die();
-                    for (var i = 0; i < allEnemies.length; i++) {
-                        allEnemies[i].freeze();
+                    for (var j = 0; j < allEnemjes.length; j++) {
+                        allEnemies[j].freeze();
                     }
                     break;
                 }
