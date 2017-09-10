@@ -38,7 +38,6 @@ Enemy.prototype.freeze = function () {
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
   ctx.drawImage(Resources.get(this.sprite), this.xCanvas , this.yCanvas);
-  ctx.strokeRect(this.xCanvas + 5, this.yCanvas + 85, 90 , 52);
 };
 
 Enemy.prototype.reset = function () {
@@ -222,7 +221,6 @@ Player.prototype.render = function() {
   if (!this.invisible)
     ctx.drawImage(Resources.get(this.sprite), this.xCanvas, this.yCanvas);
   ctx.lineWidth = 1;
-  ctx.strokeRect(this.xCanvas + XFACTOR/5, this.yCanvas + 100, XFACTOR * 3/5, XFACTOR * 2/5);
 };
 
 // Reset player to starting positiong after death or victory
