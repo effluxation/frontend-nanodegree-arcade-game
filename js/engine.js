@@ -83,7 +83,7 @@ var Engine = (function(global) {
      */
     function update(dt) {
         updateEntities(dt);
-        // checkCollisions();
+        checkCollisions();
     }
 
     /* This is called by the update function and loops through all of the
@@ -98,6 +98,35 @@ var Engine = (function(global) {
             enemy.update(dt);
         });
         player.update(dt);
+    }
+
+    function checkCollisions() {
+        // Obrain current player surface area
+        var pBounds = player.bounds(),
+            eBounds;
+
+        // Check if any of the critical area of enemies overlaps with player's
+        for (var i = 0; i < allEnemies.length; i++) {
+
+            // Obtain current enemy surface area
+            eBounds = allEnemies[i].bounds();
+
+            // Check for overlap
+            if (eBounds.left < pBounds.right &&
+                eBounds.right > pBounds.left &&
+                // Reverse equalities for vertical dimension since
+                // y axis grows downards
+                eBounds.top < pBounds.bottom &&
+                eBounds.bottom > pBounds.top) {
+
+                // Collision detected
+                player.die();
+                break;
+            }
+        }
+        $('#topP').text( player.bounds().left.toString() );
+        $('#botP').text( player.bounds().right.toString() );
+
     }
 
     /* This function initially draws the "game level", it will then call

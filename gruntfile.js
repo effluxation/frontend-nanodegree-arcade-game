@@ -10,7 +10,7 @@ module.exports = function (grunt) {
           jQuery: true
         }
       },
-      all: ['js/app.js']
+      all: ['js/engine.js', 'js/app.js', 'js/resources.js' ]
     },
 
     watch: {

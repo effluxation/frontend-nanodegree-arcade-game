@@ -19,6 +19,8 @@ var Enemy = function(enemyRow) {
   // a helper we've provided to easily load images
   this.sprite = 'images/enemy-bug.png';
 
+  // Variables that determine the area used for collision calculations
+
   // Set remaining enemy settings
   this.reset();
 };
@@ -46,10 +48,27 @@ Enemy.prototype.update = function(dt) {
   	if (this.xCanvas >= this.xMax) this.reset();
 
   // Check if counting down to start, if yes, decrement countdown
-  } else if (this.startCountdown > 0) {
+  } else if (this.startCountdown > 0 && !this.freeze) {
   	this.startCountdown = this.startCountdown - dt;
   	if (this.startCountdown < 0) this.startCountdown = 0;
   }
+};
+
+Enemy.prototype.freeze = function () {
+	this.freeze = true;
+};
+
+Enemy.prototype.unfreeze = function () {
+	this.freeze = false;
+};
+
+Enemy.prototype.bounds = function () {
+	return {
+		left: this.xCanvas + 5,
+  	right: this.xCanvas + 5 + 52,
+  	top: this.yCanvas + 85,
+  	bottom: this.yCanvas + 85 + 90
+	};
 };
 
 // Draw the enemy on the screen, required method for game
@@ -70,6 +89,15 @@ var Player = function () {
   this.points = 0;
   this.maxVictoryJumps = 3;
   this.reset();
+};
+
+Player.prototype.bounds = function () {
+	return {
+		left: this.xCanvas + XFACTOR/5,
+  	right: this.xCanvas + XFACTOR*3/5,
+  	top: this.yCanvas + 100,
+  	bottom: this.yCanvas + 100 + XFACTOR*2/5
+	};
 };
 
 Player.prototype.update = function (dt) {
@@ -117,27 +145,13 @@ Player.prototype.update = function (dt) {
 				}
 			}
 
-
-			$('#yCanvasDiff').text( yCanvasDiff.toFixed(2) ); //BOF
-			$('#xPlayerCanvas').text(this.xCanvas.toFixed(2)); //BOF
-		  $('#yPlayerCanvas').text(this.yCanvas.toFixed(2));
-		  $('#dt').text( dt.toFixed(3) );
-
 		// Death
 		} else if (this.death) {
-			this.die(dt);
-
-			$('#xPlayerCanvas').text(this.xCanvas.toFixed(2)); //BOF
-		  $('#yPlayerCanvas').text(this.yCanvas.toFixed(2));
-		  $('#dt').text( dt.toFixed(3) );
+			this.dying(dt);
 
 		// Victory
 		} else if (this.victory) {
 			this.jump(dt);
-
-			$('#xPlayerCanvas').text(this.xCanvas.toFixed(2)); //BOF
-			$('#yPlayerCanvas').text(this.yCanvas.toFixed(2));
-			$('#dt').text( dt.toFixed(3) );
 		}
 	}
 };
@@ -189,8 +203,12 @@ Player.prototype.jump = function (dt) {
 	$('#yCanvasDiff').text( yCanvasDiff.toFixed(2) ); //BOF
 };
 
+Player.prototype.die = function () {
+	this.death = true;
+};
+
 // Death animation
-Player.prototype.die = function (dt) {
+Player.prototype.dying = function (dt) {
 	var deathJumpHeight = -30,
 			dtFactor = 18,
 			yCanvasDiff = 0;
@@ -264,9 +282,8 @@ Player.prototype.render = function() {
 	if (!this.invisible)
 		ctx.drawImage(Resources.get(this.sprite), this.xCanvas, this.yCanvas);
   ctx.lineWidth = 1;
-  ctx.strokeRect(this.xCanvas + XFACTOR/5, this.yCanvas + 100, XFACTOR*3/5,XFACTOR*2.4/5);
+  ctx.strokeRect(this.xCanvas + XFACTOR/5, this.yCanvas + 100, XFACTOR * 3/5, XFACTOR * 2/5);
 };
-
 
 Player.prototype.handleInput = function(keyPress) {
   if (!this.victory && !this.death) {

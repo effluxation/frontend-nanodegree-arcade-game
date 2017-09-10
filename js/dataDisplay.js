@@ -3,3 +3,5 @@ $('#dataList').append('<li>xPlayerCanvas: <span id="xPlayerCanvas"></span></li>'
 $('#dataList').append('<li>yPlayerCanvas: <span id="yPlayerCanvas"></span></li>')
 $('#dataList').append('<li>DT: <span id="dt"></span></li>')
 $('#dataList').append('<li>yCanvasDiff: <span id="yCanvasDiff"></span></li>')
+$('#dataList').append('<li>topP: <span id="topP"></span></li>')
+$('#dataList').append('<li>botP: <span id="botP"></span></li>')
